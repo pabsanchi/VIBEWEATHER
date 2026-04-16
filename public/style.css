@@ -1,0 +1,10 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+#weather-dashboard {
+  border: 1px solid #ccc;
+  padding: 20px;
+}
