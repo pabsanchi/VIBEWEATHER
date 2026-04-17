@@ -33,6 +33,57 @@ body.dark-theme select {
   border-color: #334155;
 }
 
+body.dark-theme .location-card,
+body.dark-theme .search-card,
+body.dark-theme #weather-dashboard,
+body.dark-theme .weather-card,
+body.dark-theme .metric-card,
+body.dark-theme .forecast-card,
+body.dark-theme .alerts-panel,
+body.dark-theme .sparkline-panel {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+body.dark-theme .location-card {
+  background: rgba(15, 23, 42, 0.92);
+}
+
+body.dark-theme .location-card p,
+body.dark-theme .location-title,
+body.dark-theme .location-helper,
+body.dark-theme .location-label {
+  color: #cbd5e1;
+}
+
+body.dark-theme .city-chip {
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.24);
+}
+
+body.dark-theme .city-chip:hover,
+body.dark-theme .city-chip:focus {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+body.dark-theme .city-chip.active-chip {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+body.dark-theme .manual-fallback label,
+body.dark-theme label {
+  color: #cbd5e1;
+}
+
+body.dark-theme .geolocate-button {
+  background: rgba(255,255,255,0.08);
+  color: #e2e8f0;
+  border-color: rgba(148,163,184,0.24);
+}
+
 body.dark-theme button.secondary {
   background: rgba(255, 255, 255, 0.08);
   color: #e2e8f0;
@@ -116,7 +167,7 @@ body.dark-theme .sparkline-header {
 }
 
 .search-card {
-  padding: 24px;
+  padding: 28px;
   margin-bottom: 28px;
   position: relative;
 }
@@ -127,11 +178,140 @@ body.dark-theme .sparkline-header {
   min-width: 140px;
 }
 
-.form-grid {
+.location-header {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.location-label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.8rem;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.location-title {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.location-helper {
+  margin: 0;
+  color: #475569;
+}
+
+.location-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.location-card {
+  background: #f8fbff;
+  border-radius: 24px;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  padding: 22px;
+  min-height: 100%;
+}
+
+.location-card-header {
+  display: flex;
+  justify-content: space-between;
   gap: 16px;
-  align-items: end;
+  margin-bottom: 18px;
+}
+
+.location-card h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+
+.location-card p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.city-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.city-chip {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.city-chip:hover,
+.city-chip:focus {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.city-chip.active-chip {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.manual-fallback {
+  margin-top: 18px;
+}
+
+.manual-form {
+  display: grid;
+  gap: 16px;
+}
+
+.geolocate-button {
+  margin-top: 18px;
+  width: 100%;
+}
+
+.field-group {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  font-size: 0.95rem;
+  color: #324a71;
+}
+
+input,
+select {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #dfe3eb;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: #ffffff;
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+@media (max-width: 940px) {
+  .location-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .field-group,

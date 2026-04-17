@@ -20,32 +20,66 @@
     </header>
 
     <section id="location-panel" class="search-card">
-      <form id="location-form" class="form-grid">
-        <div class="field-group">
-          <label for="city-select">Ciudad</label>
-          <select id="city-select">
-            <option value="">Selecciona una ciudad</option>
-            <option value="madrid">Madrid</option>
-            <option value="barcelona">Barcelona</option>
-            <option value="valencia">Valencia</option>
-            <option value="sevilla">Sevilla</option>
-            <option value="bilbao">Bilbao</option>
-            <option value="new york">New York</option>
-          </select>
+      <div class="location-header">
+        <div>
+          <p class="location-label">Seleccionar punto de datos</p>
+          <h2 class="location-title">Elige ciudad, coordenadas manuales o usa tu ubicación.</h2>
         </div>
-        <div class="field-group">
-          <label for="lat-input">Latitud</label>
-          <input id="lat-input" type="number" step="0.0001" placeholder="40.7128" />
+        <p class="location-helper">Las ciudades rápidas cargan datos al instante. Usa coordenadas para un punto exacto.</p>
+      </div>
+
+      <div class="location-grid">
+        <div class="location-card">
+          <div class="location-card-header">
+            <div>
+              <h3>Ubicación rápida</h3>
+              <p>Selecciona una ciudad o elige una opción rápida.</p>
+            </div>
+          </div>
+          <div class="city-buttons">
+            <button type="button" class="city-chip" data-city="madrid">Madrid</button>
+            <button type="button" class="city-chip" data-city="barcelona">Barcelona</button>
+            <button type="button" class="city-chip" data-city="valencia">Valencia</button>
+            <button type="button" class="city-chip" data-city="sevilla">Sevilla</button>
+            <button type="button" class="city-chip" data-city="bilbao">Bilbao</button>
+            <button type="button" class="city-chip" data-city="new york">New York</button>
+          </div>
+          <div class="manual-fallback">
+            <label for="city-select">También puedes buscar por ciudad</label>
+            <select id="city-select">
+              <option value="">Selecciona una ciudad</option>
+              <option value="madrid">Madrid</option>
+              <option value="barcelona">Barcelona</option>
+              <option value="valencia">Valencia</option>
+              <option value="sevilla">Sevilla</option>
+              <option value="bilbao">Bilbao</option>
+              <option value="new york">New York</option>
+            </select>
+          </div>
         </div>
-        <div class="field-group">
-          <label for="lon-input">Longitud</label>
-          <input id="lon-input" type="number" step="0.0001" placeholder="-74.0060" />
+
+        <div class="location-card">
+          <div class="location-card-header">
+            <div>
+              <h3>Coordenadas manuales</h3>
+              <p>Introduce latitud y longitud para cualquier lugar del planeta.</p>
+            </div>
+          </div>
+          <form id="location-form" class="manual-form">
+            <div class="field-group">
+              <label for="lat-input">Latitud</label>
+              <input id="lat-input" type="number" step="0.0001" placeholder="40.7128" />
+            </div>
+            <div class="field-group">
+              <label for="lon-input">Longitud</label>
+              <input id="lon-input" type="number" step="0.0001" placeholder="-74.0060" />
+            </div>
+            <button type="submit" class="primary">Buscar</button>
+          </form>
+          <button id="geolocate-button" type="button" class="secondary geolocate-button">Usar mi ubicación</button>
         </div>
-        <div class="action-group">
-          <button type="submit" class="primary">Buscar</button>
-          <button id="geolocate-button" type="button" class="secondary">Usar geolocalización</button>
-        </div>
-      </form>
+      </div>
+
       <div id="location-error" class="error"></div>
       <div id="refresh-info" class="refresh-info"></div>
     </section>

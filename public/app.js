@@ -1,5 +1,6 @@
 const dashboard = document.getElementById('weather-dashboard');
 const citySelect = document.getElementById('city-select');
+const cityChips = document.querySelectorAll('.city-chip');
 const latInput = document.getElementById('lat-input');
 const lonInput = document.getElementById('lon-input');
 const locationForm = document.getElementById('location-form');
@@ -117,10 +118,17 @@ function renderRefreshInfo() {
 
 function applyThemeFromStorage() {
   const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark') {
+  const useDark = savedTheme !== 'light';
+
+  if (useDark) {
     body.classList.add('dark-theme');
     if (themeToggleButton) {
       themeToggleButton.textContent = 'Modo claro';
+    }
+  } else {
+    body.classList.remove('dark-theme');
+    if (themeToggleButton) {
+      themeToggleButton.textContent = 'Modo oscuro';
     }
   }
 }
@@ -175,15 +183,23 @@ function renderTemperatureGraph(forecast) {
   `;
 }
 
+function setActiveCityChip(city) {
+  cityChips.forEach((chip) => {
+    chip.classList.toggle('active-chip', chip.dataset.city === city);
+  });
+}
+
 function setFormValues(location) {
   if (location.city) {
     citySelect.value = location.city;
+    setActiveCityChip(location.city);
     latInput.value = '';
     lonInput.value = '';
     return;
   }
 
   citySelect.value = '';
+  setActiveCityChip('');
   latInput.value = location.lat.toFixed(4);
   lonInput.value = location.lon.toFixed(4);
 }
@@ -313,6 +329,14 @@ function attachEventHandlers() {
     await loadWeather({ lat: Number(location.lat), lon: Number(location.lon) });
   });
 
+  cityChips.forEach((chip) => {
+    chip.addEventListener('click', async () => {
+      const city = chip.dataset.city;
+      if (!city) return;
+      await loadWeather({ city });
+    });
+  });
+
   geoButton.addEventListener('click', () => {
     if (!navigator.geolocation) {
       showError('Geolocalización no soportada por el navegador.');
@@ -349,6 +373,7 @@ function startAutoRefresh() {
 }
 
 function init() {
+  applyThemeFromStorage();
   attachEventHandlers();
   loadWeather(currentLocation);
   startAutoRefresh();
