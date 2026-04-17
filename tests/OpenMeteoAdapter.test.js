@@ -100,6 +100,45 @@ describe('OpenMeteoAdapter', () => {
     expect(result.current.sunset).toBe(apiResponse.daily.sunset[0]);
   });
 
+  it('should fallback to nearest hourly index when current_weather time does not exactly match hourly time', async () => {
+    const base = new Date('2026-04-17T10:30:00Z');
+    const times = Array.from({ length: 26 }, (_, index) => new Date(base.getTime() + index * 3600000).toISOString());
+    const apiResponse = {
+      current_weather: {
+        temperature: 22,
+        weathercode: 0,
+        windspeed: 7,
+        time: new Date('2026-04-17T10:20:00Z').toISOString()
+      },
+      hourly: {
+        time: times,
+        temperature_2m: times.map(() => 22),
+        weathercode: times.map(() => 0),
+        windspeed_10m: times.map(() => 7),
+        precipitation: times.map(() => 0),
+        relativehumidity_2m: times.map((_, index) => (index === 0 ? 50 : 70)),
+        pressure_msl: times.map(() => 1010),
+        apparent_temperature: times.map(() => 21)
+      },
+      daily: {
+        sunrise: [new Date('2026-04-17T06:10:00Z').toISOString()],
+        sunset: [new Date('2026-04-17T20:10:00Z').toISOString()]
+      }
+    };
+
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue(apiResponse)
+    });
+
+    const adapter = new OpenMeteoAdapter();
+    const result = await adapter.getWeather({ lat: 40.7128, lon: -74.0060 });
+
+    expect(result.current.humidity).toBe(50);
+    expect(result.current.pressure).toBe(1010);
+    expect(result.current.feels_like).toBe(21);
+  });
+
   it('should cache weather responses and reuse them for repeated requests', async () => {
     const now = new Date('2026-04-17T10:00:00Z');
     const times = Array.from({ length: 26 }, (_, index) => new Date(now.getTime() + index * 3600000).toISOString());

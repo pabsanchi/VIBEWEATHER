@@ -52,7 +52,11 @@ class OpenMeteoAdapter {
 
   buildCurrent(data) {
     const weatherCode = data.current_weather.weathercode;
-    const hourIndex = this.findCurrentHourIndex(data.hourly.time, data.current_weather.time);
+    let hourIndex = this.findCurrentHourIndex(data.hourly.time, data.current_weather.time);
+    if (hourIndex < 0) {
+      hourIndex = this.findNearestHourIndex(data.hourly.time, data.current_weather.time);
+    }
+
     return {
       temperature: data.current_weather.temperature,
       condition: this.mapToCondition(weatherCode),
@@ -118,6 +122,22 @@ class OpenMeteoAdapter {
 
   findCurrentHourIndex(hours, currentTime) {
     return hours.findIndex((hour) => hour === currentTime);
+  }
+
+  findNearestHourIndex(hours, currentTime) {
+    const target = new Date(currentTime).getTime();
+    let closestIndex = -1;
+    let smallestDiff = Infinity;
+
+    hours.forEach((hour, index) => {
+      const diff = Math.abs(new Date(hour).getTime() - target);
+      if (diff < smallestDiff) {
+        smallestDiff = diff;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
   }
 
   getCacheKey(location) {
