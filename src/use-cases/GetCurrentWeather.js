@@ -7,7 +7,16 @@ class GetCurrentWeather {
 
   async execute(location) {
     const data = await this.weatherRepository.getCurrent(location);
-    return new Weather(data.temperature, data.condition, data.icon);
+    return new Weather(
+      data.temperature,
+      data.condition,
+      data.icon,
+      data.humidity,
+      data.pressure,
+      data.feels_like,
+      data.sunrise,
+      data.sunset
+    );
   }
 }
 

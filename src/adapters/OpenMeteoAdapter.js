@@ -1,4 +1,11 @@
+const logger = require('../utils/logger');
+
 class OpenMeteoAdapter {
+  constructor() {
+    this.cache = new Map();
+    this.cacheTtl = Number(process.env.WEATHER_CACHE_TTL) || 5 * 60 * 1000;
+  }
+
   async getCurrent(location) {
     const weather = await this.getWeather(location);
     return {
@@ -9,18 +16,32 @@ class OpenMeteoAdapter {
   }
 
   async getWeather(location) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true&hourly=temperature_2m,weathercode,windspeed_10m,precipitation&forecast_days=1&timezone=auto`;
+    const cacheKey = this.getCacheKey(location);
+    const cached = this.cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < this.cacheTtl) {
+      logger.info(`Cache hit for location ${cacheKey}`);
+      return cached.value;
+    }
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true&hourly=temperature_2m,weathercode,windspeed_10m,precipitation,relativehumidity_2m,pressure_msl,apparent_temperature&daily=sunrise,sunset&forecast_days=1&timezone=auto`;
     const response = await fetch(url);
-    if (!response.ok) throw new Error('API Error');
+    if (!response.ok) {
+      logger.error(`Open-Meteo API returned ${response.status}`);
+      throw new Error('API Error');
+    }
 
     const data = await response.json();
     this.validateData(data);
 
-    return {
+    const result = {
       current: this.buildCurrent(data),
       forecast: this.buildHourlyForecast(data),
       alerts: this.buildAlerts(data)
     };
+
+    this.cache.set(cacheKey, { value: result, timestamp: Date.now() });
+    logger.info(`Cache stored for location ${cacheKey}`);
+    return result;
   }
 
   validateData(data) {
@@ -31,17 +52,23 @@ class OpenMeteoAdapter {
 
   buildCurrent(data) {
     const weatherCode = data.current_weather.weathercode;
+    const hourIndex = this.findCurrentHourIndex(data.hourly.time, data.current_weather.time);
     return {
       temperature: data.current_weather.temperature,
       condition: this.mapToCondition(weatherCode),
       icon: this.mapToIcon(weatherCode),
       windspeed: data.current_weather.windspeed,
-      time: data.current_weather.time
+      time: data.current_weather.time,
+      humidity: hourIndex >= 0 ? data.hourly.relativehumidity_2m[hourIndex] : null,
+      pressure: hourIndex >= 0 ? data.hourly.pressure_msl[hourIndex] : null,
+      feels_like: hourIndex >= 0 ? data.hourly.apparent_temperature[hourIndex] : null,
+      sunrise: data.daily?.sunrise?.[0] || null,
+      sunset: data.daily?.sunset?.[0] || null
     };
   }
 
   buildHourlyForecast(data) {
-    const { time, temperature_2m, weathercode, windspeed_10m, precipitation } = data.hourly;
+    const { time, temperature_2m, weathercode, windspeed_10m, precipitation, relativehumidity_2m, pressure_msl, apparent_temperature } = data.hourly;
     const currentTimestamp = new Date(data.current_weather.time).getTime();
 
     return time
@@ -51,7 +78,10 @@ class OpenMeteoAdapter {
         condition: this.mapToCondition(weathercode[index]),
         icon: this.mapToIcon(weathercode[index]),
         windspeed: windspeed_10m[index],
-        precipitation: precipitation[index]
+        precipitation: precipitation[index],
+        humidity: relativehumidity_2m[index],
+        pressure: pressure_msl[index],
+        feels_like: apparent_temperature[index]
       }))
       .filter((hourItem) => new Date(hourItem.time).getTime() >= currentTimestamp)
       .slice(0, 24);
@@ -84,6 +114,14 @@ class OpenMeteoAdapter {
     }
 
     return 'moderate';
+  }
+
+  findCurrentHourIndex(hours, currentTime) {
+    return hours.findIndex((hour) => hour === currentTime);
+  }
+
+  getCacheKey(location) {
+    return `${location.lat.toFixed(4)}:${location.lon.toFixed(4)}`;
   }
 
   mapToCondition(code) {

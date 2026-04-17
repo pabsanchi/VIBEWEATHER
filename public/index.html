@@ -8,6 +8,34 @@
 <body>
   <div id="app">
     <h1>Portal Meteorológico</h1>
+    <section id="location-panel">
+      <form id="location-form">
+        <label>
+          Ciudad
+          <select id="city-select">
+            <option value="">Selecciona una ciudad</option>
+            <option value="madrid">Madrid</option>
+            <option value="barcelona">Barcelona</option>
+            <option value="valencia">Valencia</option>
+            <option value="sevilla">Sevilla</option>
+            <option value="bilbao">Bilbao</option>
+            <option value="new york">New York</option>
+          </select>
+        </label>
+        <label>
+          Latitud
+          <input id="lat-input" type="number" step="0.0001" placeholder="40.7128" />
+        </label>
+        <label>
+          Longitud
+          <input id="lon-input" type="number" step="0.0001" placeholder="-74.0060" />
+        </label>
+        <button type="submit">Buscar</button>
+        <button id="geolocate-button" type="button">Usar geolocalización</button>
+      </form>
+      <div id="location-error" class="error"></div>
+      <div id="refresh-info"></div>
+    </section>
     <div id="weather-dashboard">
       <!-- Weather content -->
     </div>
