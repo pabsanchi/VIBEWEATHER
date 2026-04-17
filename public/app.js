@@ -52,24 +52,56 @@ function renderWeather(data) {
   const { current, forecast, alerts } = data;
   dashboard.innerHTML = `
     <section class="weather-card">
-      <div class="weather-current">
-        <span class="weather-icon">${iconEmoji(current.icon)}</span>
-        <div>
-          <h2>${current.temperature}°C</h2>
-          <p>${current.condition}</p>
-          <p>Viento: ${current.windspeed} km/h</p>
-          <p>Humedad: ${current.humidity ?? 'N/A'}%</p>
-          <p>Presión: ${current.pressure ?? 'N/A'} hPa</p>
-          <p>Sensación térmica: ${current.feels_like ?? 'N/A'}°C</p>
-          <p>Amanecer: ${current.sunrise ? formatTime(current.sunrise) : 'N/A'}</p>
-          <p>Atardecer: ${current.sunset ? formatTime(current.sunset) : 'N/A'}</p>
-          <p>Última actualización: ${formatTime(current.time)}</p>
+      <div class="weather-card-header">
+        <div class="weather-current">
+          <span class="weather-icon">${iconEmoji(current.icon)}</span>
+          <div>
+            <p class="weather-location">Clima actual</p>
+            <h2>${current.temperature}°C</h2>
+            <p class="weather-condition">${current.condition}</p>
+            <div class="weather-meta">
+              <span>Última actualización: ${formatTime(current.time)}</span>
+              <span>${current.sunrise ? `Amanecer ${formatTime(current.sunrise)}` : 'Amanecer N/A'}</span>
+              <span>${current.sunset ? `Atardecer ${formatTime(current.sunset)}` : 'Atardecer N/A'}</span>
+            </div>
+          </div>
         </div>
+        <div class="weather-status-pill">${current.icon === 'rainy' ? 'Chubascos posibles' : 'Condiciones estables'}</div>
+      </div>
+
+      <div class="stats-grid">
+        ${renderMetricCard('Sensación térmica', `${current.feels_like ?? 'N/A'}°C`)}
+        ${renderMetricCard('Viento', `${current.windspeed} km/h`)}
+        ${renderMetricCard('Humedad', `${current.humidity ?? 'N/A'}%`)}
+        ${renderMetricCard('Presión', `${current.pressure ?? 'N/A'} hPa`)}
+        ${renderMetricCard('Precipitación', `${current.precipitation ?? '0'} mm`)}
+        ${renderMetricCard('Cobertura', current.condition)}
       </div>
     </section>
+
     ${renderAlerts(alerts)}
-    <section>
-      <h3>Previsión 24 horas</h3>
+    ${renderForecastSection(forecast)}
+  `;
+}
+
+function renderMetricCard(label, value) {
+  return `
+    <article class="metric-card">
+      <strong>${label}</strong>
+      <span>${value}</span>
+    </article>
+  `;
+}
+
+function renderForecastSection(forecast) {
+  return `
+    <section class="forecast-section">
+      <div class="section-header">
+        <div>
+          <h3>Previsión 24 horas</h3>
+          <p class="section-subtitle">Actualizada automáticamente cada 10 minutos.</p>
+        </div>
+      </div>
       <div class="forecast-grid">${forecast.map(renderHourCard).join('')}</div>
     </section>
   `;
@@ -197,10 +229,6 @@ function iconEmoji(icon) {
     default:
       return '🌡️';
   }
-}
-
-function showDashboardError(message) {
-  dashboard.innerHTML = `<p class="error">${message}</p>`;
 }
 
 function attachEventHandlers() {
