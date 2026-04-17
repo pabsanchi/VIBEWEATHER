@@ -6,6 +6,78 @@ body {
   background: radial-gradient(circle at top left, rgba(33, 150, 243, 0.12), transparent 40%),
     linear-gradient(180deg, #eff6ff 0%, #f8fbff 60%, #ffffff 100%);
   color: #112240;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-theme {
+  background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 45%),
+    linear-gradient(180deg, #0f172a 0%, #111827 65%, #0b1120 100%);
+  color: #e2e8f0;
+}
+
+body.dark-theme .search-card,
+body.dark-theme #weather-dashboard,
+body.dark-theme .weather-card,
+body.dark-theme .metric-card,
+body.dark-theme .forecast-card,
+body.dark-theme .alerts-panel,
+body.dark-theme .sparkline-panel {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+body.dark-theme input,
+body.dark-theme select {
+  background: #111827;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+body.dark-theme button.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.24);
+}
+
+body.dark-theme .theme-toggle-button {
+  color: #e2e8f0;
+}
+
+body.dark-theme .weather-current div p,
+body.dark-theme .weather-meta,
+body.dark-theme .section-subtitle,
+body.dark-theme .refresh-info,
+body.dark-theme .hero-subtitle,
+body.dark-theme .weather-location {
+  color: #cbd5e1;
+}
+
+body.dark-theme .weather-condition,
+body.dark-theme .metric-card strong,
+body.dark-theme .metric-card span,
+body.dark-theme .forecast-card span,
+body.dark-theme .weather-status-pill,
+body.dark-theme .section-header h3,
+body.dark-theme .sparkline-header h4,
+body.dark-theme .sparkline-highlight {
+  color: #f8fafc;
+}
+
+body.dark-theme .forecast-card {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.dark-theme .metric-card {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.dark-theme .weather-status-pill {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+body.dark-theme .weather-card-header,
+body.dark-theme .sparkline-header {
+  color: #e2e8f0;
 }
 
 #app {
@@ -46,6 +118,13 @@ body {
 .search-card {
   padding: 24px;
   margin-bottom: 28px;
+  position: relative;
+}
+
+.theme-toggle-button {
+  align-self: center;
+  padding: 12px 18px;
+  min-width: 140px;
 }
 
 .form-grid {
@@ -222,6 +301,44 @@ button.secondary:hover {
   margin: 4px 0 0;
   color: #475569;
   font-size: 0.95rem;
+}
+
+.sparkline-panel {
+  border-radius: 22px;
+  padding: 22px;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.06);
+  margin-bottom: 24px;
+}
+
+.sparkline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sparkline-header h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.sparkline-header p {
+  margin: 4px 0 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.sparkline-highlight {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.sparkline-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
 
 .forecast-section {

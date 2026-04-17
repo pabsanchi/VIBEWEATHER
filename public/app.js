@@ -6,6 +6,8 @@ const locationForm = document.getElementById('location-form');
 const geoButton = document.getElementById('geolocate-button');
 const locationError = document.getElementById('location-error');
 const refreshInfo = document.getElementById('refresh-info');
+const themeToggleButton = document.getElementById('theme-toggle-button');
+const body = document.body;
 
 const defaultLocation = { lat: 40.7128, lon: -74.0060 };
 let currentLocation = { ...defaultLocation };
@@ -79,6 +81,7 @@ function renderWeather(data) {
       </div>
     </section>
 
+    ${renderTemperatureGraph(forecast)}
     ${renderAlerts(alerts)}
     ${renderForecastSection(forecast)}
   `;
@@ -110,6 +113,66 @@ function renderForecastSection(forecast) {
 function renderRefreshInfo() {
   const nextRefresh = new Date(Date.now() + 10 * 60 * 1000);
   refreshInfo.textContent = `Última carga: ${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} · Próximo refresco: ${nextRefresh.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+function applyThemeFromStorage() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    body.classList.add('dark-theme');
+    if (themeToggleButton) {
+      themeToggleButton.textContent = 'Modo claro';
+    }
+  }
+}
+
+function toggleTheme() {
+  const isDark = body.classList.toggle('dark-theme');
+  if (themeToggleButton) {
+    themeToggleButton.textContent = isDark ? 'Modo claro' : 'Modo oscuro';
+  }
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+function renderTemperatureGraph(forecast) {
+  const sample = forecast.slice(0, 12);
+  if (!sample.length) {
+    return '';
+  }
+
+  const temps = sample.map((hour) => hour.temperature);
+  const maxTemp = Math.max(...temps);
+  const minTemp = Math.min(...temps);
+  const width = 460;
+  const height = 140;
+  const padding = 14;
+  const range = maxTemp - minTemp || 1;
+
+  const points = sample.map((hour, index) => {
+    const x = padding + (index / (sample.length - 1)) * (width - padding * 2);
+    const y = height - padding - ((hour.temperature - minTemp) / range) * (height - padding * 2);
+    return `${x},${y}`;
+  }).join(' ');
+
+  return `
+    <section class="sparkline-panel">
+      <div class="sparkline-header">
+        <div>
+          <h4>Gráfica de temperatura</h4>
+          <p>Próximas 12 horas</p>
+        </div>
+        <span class="sparkline-highlight">Máx ${maxTemp}° / Mín ${minTemp}°</span>
+      </div>
+      <svg viewBox="0 0 ${width} ${height}" class="sparkline-svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#60a5fa" />
+            <stop offset="100%" stop-color="#fb7185" />
+          </linearGradient>
+        </defs>
+        <polyline points="${points}" fill="none" stroke="url(#sparklineGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </section>
+  `;
 }
 
 function setFormValues(location) {
@@ -270,6 +333,10 @@ function attachEventHandlers() {
       }
     );
   });
+
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener('click', toggleTheme);
+  }
 }
 
 function startAutoRefresh() {
