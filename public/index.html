@@ -7,11 +7,17 @@
 </head>
 <body>
   <div id="app">
-    <h1>Portal Meteorológico</h1>
-    <section id="location-panel">
-      <form id="location-form">
-        <label>
-          Ciudad
+    <header class="page-header">
+      <div>
+        <h1>Portal Meteorológico</h1>
+        <p class="hero-subtitle">Clima en tiempo real, alertas y pronóstico extendido en una sola vista.</p>
+      </div>
+    </header>
+
+    <section id="location-panel" class="search-card">
+      <form id="location-form" class="form-grid">
+        <div class="field-group">
+          <label for="city-select">Ciudad</label>
           <select id="city-select">
             <option value="">Selecciona una ciudad</option>
             <option value="madrid">Madrid</option>
@@ -21,21 +27,24 @@
             <option value="bilbao">Bilbao</option>
             <option value="new york">New York</option>
           </select>
-        </label>
-        <label>
-          Latitud
+        </div>
+        <div class="field-group">
+          <label for="lat-input">Latitud</label>
           <input id="lat-input" type="number" step="0.0001" placeholder="40.7128" />
-        </label>
-        <label>
-          Longitud
+        </div>
+        <div class="field-group">
+          <label for="lon-input">Longitud</label>
           <input id="lon-input" type="number" step="0.0001" placeholder="-74.0060" />
-        </label>
-        <button type="submit">Buscar</button>
-        <button id="geolocate-button" type="button">Usar geolocalización</button>
+        </div>
+        <div class="action-group">
+          <button type="submit" class="primary">Buscar</button>
+          <button id="geolocate-button" type="button" class="secondary">Usar geolocalización</button>
+        </div>
       </form>
       <div id="location-error" class="error"></div>
-      <div id="refresh-info"></div>
+      <div id="refresh-info" class="refresh-info"></div>
     </section>
+
     <div id="weather-dashboard">
       <!-- Weather content -->
     </div>
