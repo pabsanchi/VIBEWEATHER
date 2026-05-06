@@ -60,7 +60,7 @@ function renderWeather(data) {
           <span class="weather-icon">${iconEmoji(current.icon)}</span>
           <div>
             <p class="weather-location">Clima actual</p>
-            <h2>${current.temperature}°C</h2>
+            <h2>${current.temperature.celsius}°C / ${current.temperature.fahrenheit}°F</h2>
             <p class="weather-condition">${current.condition}</p>
             <div class="weather-meta">
               <span>Última actualización: ${formatTime(current.time)}</span>
@@ -73,20 +73,7 @@ function renderWeather(data) {
       </div>
 
       <div class="stats-grid">
-        ${renderMetricCard('Sensación térmica', `${current.feels_like ?? 'N/A'}°C`)}
-        ${renderMetricCard('Viento', `${current.windspeed} km/h`)}
-        ${renderMetricCard('Humedad', `${current.humidity ?? 'N/A'}%`)}
-        ${renderMetricCard('Presión', `${current.pressure ?? 'N/A'} hPa`)}
-        ${renderMetricCard('Precipitación', `${current.precipitation ?? '0'} mm`)}
-        ${renderMetricCard('Cobertura', current.condition)}
-      </div>
-    </section>
-
-    ${renderTemperatureGraph(forecast)}
-    ${renderAlerts(alerts)}
-    ${renderForecastSection(forecast)}
-  `;
-}
+        ${renderMetricCard('Sensación térmica', `${current.feels_like ? current.feels_like.celsius + '°C / ' + current.feels_like.fahrenheit + '°F' : 'N/A'}`)}\n        ${renderMetricCard('Viento', `${current.windspeed.kmh} km/h / ${current.windspeed.ms} m/s`)}\n        ${renderMetricCard('Humedad', `${current.humidity ?? 'N/A'}%`)}\n        ${renderMetricCard('Presión', `${current.pressure ?? 'N/A'} hPa`)}\n        ${renderMetricCard('Precipitación', `${current.precipitation ?? '0'} mm`)}\n        ${renderMetricCard('Cobertura', current.condition)}\n      </div>\n    </section>\n\n    ${renderTemperatureGraph(forecast)}\n    ${renderAlerts(alerts)}\n    ${renderForecastSection(forecast)}\n  `}
 
 function renderMetricCard(label, value) {
   return `
@@ -147,7 +134,7 @@ function renderTemperatureGraph(forecast) {
     return '';
   }
 
-  const temps = sample.map((hour) => hour.temperature);
+  const temps = sample.map((hour) => hour.temperature.celsius);
   const maxTemp = Math.max(...temps);
   const minTemp = Math.min(...temps);
   const width = 460;
@@ -157,7 +144,7 @@ function renderTemperatureGraph(forecast) {
 
   const points = sample.map((hour, index) => {
     const x = padding + (index / (sample.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((hour.temperature - minTemp) / range) * (height - padding * 2);
+    const y = height - padding - ((hour.temperature.celsius - minTemp) / range) * (height - padding * 2);
     return `${x},${y}`;
   }).join(' ');
 
@@ -275,7 +262,7 @@ function renderHourCard(hour) {
     <article class="forecast-card">
       <span class="forecast-time">${formatHour(hour.time)}</span>
       <span class="forecast-icon">${iconEmoji(hour.icon)}</span>
-      <span>${hour.temperature}°C</span>
+      <span>${hour.temperature.celsius}°C / ${hour.temperature.fahrenheit}°F</span>
       <span>${hour.condition}</span>
     </article>
   `;
