@@ -46,12 +46,14 @@ describe('OpenMeteoAdapter', () => {
     const adapter = new OpenMeteoAdapter();
     const result = await adapter.getWeather({ lat: 40.7128, lon: -74.0060 });
 
-    expect(result.current.temperature).toBe(15);
+    expect(result.current.temperature.celsius).toBe(15);
+    expect(result.current.temperature.fahrenheit).toBe(59);
     expect(result.current.condition).toBe('Clear');
     expect(result.current.icon).toBe('sunny');
     expect(result.current.humidity).toBe(60);
     expect(result.current.pressure).toBe(1012);
-    expect(result.current.feels_like).toBe(15);
+    expect(result.current.feels_like.celsius).toBe(15);
+    expect(result.current.feels_like.fahrenheit).toBe(59);
     expect(result.current.sunrise).toBe(apiResponse.daily.sunrise[0]);
     expect(result.current.sunset).toBe(apiResponse.daily.sunset[0]);
     expect(result.forecast).toHaveLength(24);
@@ -95,7 +97,8 @@ describe('OpenMeteoAdapter', () => {
 
     expect(result.current.humidity).toBe(48);
     expect(result.current.pressure).toBe(1018);
-    expect(result.current.feels_like).toBe(17);
+    expect(result.current.feels_like.celsius).toBe(17);
+    expect(result.current.feels_like.fahrenheit).toBe(62.6);
     expect(result.current.sunrise).toBe(apiResponse.daily.sunrise[0]);
     expect(result.current.sunset).toBe(apiResponse.daily.sunset[0]);
   });
@@ -136,7 +139,8 @@ describe('OpenMeteoAdapter', () => {
 
     expect(result.current.humidity).toBe(50);
     expect(result.current.pressure).toBe(1010);
-    expect(result.current.feels_like).toBe(21);
+    expect(result.current.feels_like.celsius).toBe(21);
+    expect(result.current.feels_like.fahrenheit).toBe(69.8);
   });
 
   it('should cache weather responses and reuse them for repeated requests', async () => {

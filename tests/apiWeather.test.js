@@ -93,7 +93,8 @@ describe('/api/weather', () => {
     const response = await request(app).get('/api/weather?city=madrid');
 
     expect(response.status).toBe(200);
-    expect(response.body.current.temperature).toBe(20);
+    expect(response.body.current.temperature.celsius).toBe(20);
+    expect(response.body.current.temperature.fahrenheit).toBe(68);
     expect(response.body.current.humidity).toBe(55);
     expect(response.body.current.pressure).toBe(1015);
     expect(response.body.current.sunrise).toBe(apiResponse.daily.sunrise[0]);

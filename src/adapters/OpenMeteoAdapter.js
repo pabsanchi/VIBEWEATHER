@@ -1,4 +1,5 @@
 const logger = require('../utils/logger');
+const { celsiusToFahrenheit, kmhToMs } = require('../utils/conversions');
 
 class OpenMeteoAdapter {
   constructor() {
@@ -57,15 +58,29 @@ class OpenMeteoAdapter {
       hourIndex = this.findNearestHourIndex(data.hourly.time, data.current_weather.time);
     }
 
+    const tempCelsius = data.current_weather.temperature;
+    const windspeedKmh = data.current_weather.windspeed;
+    const feelsLikeCelsius = hourIndex >= 0 ? data.hourly.apparent_temperature[hourIndex] : null;
+
     return {
-      temperature: data.current_weather.temperature,
+      temperature: {
+        celsius: tempCelsius,
+        fahrenheit: celsiusToFahrenheit(tempCelsius)
+      },
       condition: this.mapToCondition(weatherCode),
       icon: this.mapToIcon(weatherCode),
-      windspeed: data.current_weather.windspeed,
+      windspeed: {
+        kmh: windspeedKmh,
+        ms: kmhToMs(windspeedKmh)
+      },
       time: data.current_weather.time,
       humidity: hourIndex >= 0 ? data.hourly.relativehumidity_2m[hourIndex] : null,
       pressure: hourIndex >= 0 ? data.hourly.pressure_msl[hourIndex] : null,
-      feels_like: hourIndex >= 0 ? data.hourly.apparent_temperature[hourIndex] : null,
+      feels_like: feelsLikeCelsius !== null ? {
+        celsius: feelsLikeCelsius,
+        fahrenheit: celsiusToFahrenheit(feelsLikeCelsius)
+      } : null,
+      precipitation: hourIndex >= 0 ? data.hourly.precipitation[hourIndex] : null,
       sunrise: data.daily?.sunrise?.[0] || null,
       sunset: data.daily?.sunset?.[0] || null
     };
@@ -76,17 +91,32 @@ class OpenMeteoAdapter {
     const currentTimestamp = new Date(data.current_weather.time).getTime();
 
     return time
-      .map((hour, index) => ({
-        time: hour,
-        temperature: temperature_2m[index],
-        condition: this.mapToCondition(weathercode[index]),
-        icon: this.mapToIcon(weathercode[index]),
-        windspeed: windspeed_10m[index],
-        precipitation: precipitation[index],
-        humidity: relativehumidity_2m[index],
-        pressure: pressure_msl[index],
-        feels_like: apparent_temperature[index]
-      }))
+      .map((hour, index) => {
+        const tempC = temperature_2m[index];
+        const windC = windspeed_10m[index];
+        const feelsC = apparent_temperature[index];
+
+        return {
+          time: hour,
+          temperature: {
+            celsius: tempC,
+            fahrenheit: celsiusToFahrenheit(tempC)
+          },
+          condition: this.mapToCondition(weathercode[index]),
+          icon: this.mapToIcon(weathercode[index]),
+          windspeed: {
+            kmh: windC,
+            ms: kmhToMs(windC)
+          },
+          precipitation: precipitation[index],
+          humidity: relativehumidity_2m[index],
+          pressure: pressure_msl[index],
+          feels_like: {
+            celsius: feelsC,
+            fahrenheit: celsiusToFahrenheit(feelsC)
+          }
+        };
+      })
       .filter((hourItem) => new Date(hourItem.time).getTime() >= currentTimestamp)
       .slice(0, 24);
   }
