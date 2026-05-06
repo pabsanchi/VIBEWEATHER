@@ -9,15 +9,15 @@ class GenerateWeatherAlerts {
       return alerts;
     }
 
-    if (current.temperature >= 35) {
+    if (current.temperature.celsius >= 35) {
       alerts.push(new WeatherAlert('heat', 'Alerta de calor extremo: mantente hidratado.', 'high'));
     }
 
-    if (current.temperature <= 0) {
+    if (current.temperature.celsius <= 0) {
       alerts.push(new WeatherAlert('freeze', 'Alerta de heladas: protege las plantas y tuberías.', 'high'));
     }
 
-    if (current.windspeed >= 50) {
+    if (current.windspeed.kmh >= 50) {
       alerts.push(new WeatherAlert('wind', 'Alerta de viento fuerte: asegura objetos sueltos.', 'high'));
     }
 

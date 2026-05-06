@@ -73,7 +73,7 @@ function renderWeather(data) {
       </div>
 
       <div class="stats-grid">
-        ${renderMetricCard('Sensación térmica', `${current.feels_like ? current.feels_like.celsius + '°C / ' + current.feels_like.fahrenheit + '°F' : 'N/A'}`)}\n        ${renderMetricCard('Viento', `${current.windspeed.kmh} km/h / ${current.windspeed.ms} m/s`)}\n        ${renderMetricCard('Humedad', `${current.humidity ?? 'N/A'}%`)}\n        ${renderMetricCard('Presión', `${current.pressure ?? 'N/A'} hPa`)}\n        ${renderMetricCard('Precipitación', `${current.precipitation ?? '0'} mm`)}\n        ${renderMetricCard('Cobertura', current.condition)}\n      </div>\n    </section>\n\n    ${renderTemperatureGraph(forecast)}\n    ${renderAlerts(alerts)}\n    ${renderForecastSection(forecast)}\n  `;\n}
+        ${renderMetricCard('Sensación térmica', `${current.feels_like ? current.feels_like.celsius + '°C / ' + current.feels_like.fahrenheit + '°F' : 'N/A'}`)}\n        ${renderMetricCard('Viento', `${current.windspeed.kmh} km/h / ${current.windspeed.ms} m/s`)}\n        ${renderMetricCard('Humedad', `${current.humidity ?? 'N/A'}%`)}\n        ${renderMetricCard('Presión', `${current.pressure ?? 'N/A'} hPa`)}\n        ${renderMetricCard('Precipitación', `${current.precipitation ?? '0'} mm`)}\n        ${renderMetricCard('Cobertura', current.condition)}\n      </div>\n    </section>\n\n    ${renderTemperatureGraph(forecast)}\n    ${renderAlerts(alerts)}\n    ${renderForecastSection(forecast)}\n  `}
 
 function renderMetricCard(label, value) {
   return `
